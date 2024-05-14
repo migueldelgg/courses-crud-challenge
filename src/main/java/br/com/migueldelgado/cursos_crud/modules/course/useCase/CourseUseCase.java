@@ -1,6 +1,7 @@
 package br.com.migueldelgado.cursos_crud.modules.course.useCase;
 
 import br.com.migueldelgado.cursos_crud.modules.course.dto.CourseDTO;
+import br.com.migueldelgado.cursos_crud.modules.course.entities.EnumActive;
 import br.com.migueldelgado.cursos_crud.modules.course.repositories.CourseRepository;
 import br.com.migueldelgado.cursos_crud.modules.course.entities.CourseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,24 @@ public class CourseUseCase {
                 .updated_at(Date.from(Instant.now())).build();
 
         courseRepository.save(course);
+    }
+
+    public void delete (Long id){
+
+        findByIdOrThrowBadRequestException(id);
+
+        courseRepository.deleteById(id);
+    }
+
+    public void patchUpdate(Long id, EnumActive enumActive){
+
+        var savedCourse = findByIdOrThrowBadRequestException(id);
+
+        // Atualizar o estado ativo/inativo do curso
+        savedCourse.setActive(enumActive);
+
+        // Salvar as alterações no banco de dados
+        courseRepository.save(savedCourse);
     }
 
 }
