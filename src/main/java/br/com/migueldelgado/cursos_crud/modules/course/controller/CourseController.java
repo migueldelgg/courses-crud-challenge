@@ -17,7 +17,7 @@ import java.util.List;
 public class CourseController {
 
     @Autowired
-    CourseUseCase courseUseCase;
+    private CourseUseCase courseUseCase;
 
     @PostMapping("/")
     public ResponseEntity<Object> create (@Valid @RequestBody CourseEntity courseEntity) {
@@ -27,6 +27,12 @@ public class CourseController {
     @GetMapping("/")
     public ResponseEntity<List<CourseDTO>> list(){
         return ResponseEntity.ok(courseUseCase.listAll());
+    }
+
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<Void> replace (@Valid @RequestBody CourseDTO courseDTO, @PathVariable Long id){
+        courseUseCase.replace(courseDTO, id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

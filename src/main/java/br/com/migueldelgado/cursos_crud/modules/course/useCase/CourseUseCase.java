@@ -4,21 +4,26 @@ import br.com.migueldelgado.cursos_crud.modules.course.dto.CourseDTO;
 import br.com.migueldelgado.cursos_crud.modules.course.repositories.CourseRepository;
 import br.com.migueldelgado.cursos_crud.modules.course.entities.CourseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.time.Instant;
+import java.util.*;
 
 @Service
 public class CourseUseCase {
 
     @Autowired
-    CourseRepository courseRepository;
+    private CourseRepository courseRepository;
 
-    CourseDTO courseDTO;
+    private CourseDTO courseDTO;
+
+    public CourseEntity findByIdOrThrowBadRequestException(Long id){
+        return courseRepository.findById(id).orElseThrow(()
+            -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Curso não encontrado.")
+        );
+    }
 
     public CourseEntity execute(CourseEntity courseEntity){
 
@@ -44,12 +49,18 @@ public class CourseUseCase {
         return list;
     }
 
-    public void replace(CourseDTO courseDTO, UUID id){
+    public void replace(CourseDTO courseDTO, Long id){
 
-        courseRepository.findById(id).orElseThrow(()
-            -> new
-        );
+        var savedCourse = findByIdOrThrowBadRequestException(id);
 
+        CourseEntity course = CourseEntity.builder().id(savedCourse.getId())
+                .name(courseDTO.getName())
+                .category(courseDTO.getCategory())
+                .active(courseDTO.getActive())
+                .created_at(savedCourse.getCreated_at())
+                .updated_at(Date.from(Instant.now())).build();
+
+        courseRepository.save(course);
     }
 
 }

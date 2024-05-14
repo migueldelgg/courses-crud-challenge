@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CourseDTO {
 
-    String name;
-    String category;
-    EnumActive active;
+    private String name;
+    private String category;
+    private EnumActive active;
 
 }
