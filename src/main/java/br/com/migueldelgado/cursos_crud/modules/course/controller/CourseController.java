@@ -1,27 +1,32 @@
 package br.com.migueldelgado.cursos_crud.modules.course.controller;
 
 
+import br.com.migueldelgado.cursos_crud.modules.course.dto.CourseDTO;
 import br.com.migueldelgado.cursos_crud.modules.course.entities.CourseEntity;
-import br.com.migueldelgado.cursos_crud.modules.course.useCase.CreateCourseUseCase;
+import br.com.migueldelgado.cursos_crud.modules.course.useCase.CourseUseCase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/course")
 public class CourseController {
 
     @Autowired
-    CreateCourseUseCase createCourseUseCase;
+    CourseUseCase courseUseCase;
 
-    @PostMapping("/create")
+    @PostMapping("/")
     public ResponseEntity<Object> create (@Valid @RequestBody CourseEntity courseEntity) {
-        return new ResponseEntity<>(createCourseUseCase.execute(courseEntity), HttpStatus.CREATED);
+        return new ResponseEntity<>(courseUseCase.execute(courseEntity), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<CourseDTO>> list(){
+        return ResponseEntity.ok(courseUseCase.listAll());
     }
 
 }

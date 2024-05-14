@@ -1,12 +1,11 @@
 package br.com.migueldelgado.cursos_crud.modules.course.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
 import java.util.UUID;
@@ -16,12 +15,19 @@ import java.util.UUID;
 public class CourseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
+    @NotBlank
+    @Length(min = 2, max = 35)
     private String name;
 
+    @NotBlank
+    @Length(min = 5, max = 30)
     private String category;
+
+    @Enumerated(EnumType.STRING)
+    private EnumActive active;
 
     @CreationTimestamp
     private Date created_at;
