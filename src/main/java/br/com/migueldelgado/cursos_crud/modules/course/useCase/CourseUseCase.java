@@ -1,13 +1,12 @@
 package br.com.migueldelgado.cursos_crud.modules.course.useCase;
 
+import br.com.migueldelgado.cursos_crud.exceptions.CourseNotFoundException;
 import br.com.migueldelgado.cursos_crud.modules.course.dto.CourseDTO;
 import br.com.migueldelgado.cursos_crud.modules.course.entities.EnumActive;
 import br.com.migueldelgado.cursos_crud.modules.course.repositories.CourseRepository;
 import br.com.migueldelgado.cursos_crud.modules.course.entities.CourseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.*;
@@ -20,37 +19,32 @@ public class CourseUseCase {
 
     private CourseDTO courseDTO;
 
-    public CourseEntity findByIdOrThrowBadRequestException(Long id){
+    public CourseEntity findByIdOrThrowBadRequestException(Long id) {
         return courseRepository.findById(id).orElseThrow(()
-            -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Curso não encontrado.")
+                -> new CourseNotFoundException()
         );
     }
 
-    public CourseEntity execute(CourseEntity courseEntity){
-
-        if(!courseEntity.getName().isEmpty() || !courseEntity.getCategory().isEmpty()) {
-            return courseRepository.save(courseEntity);
-        }
-        throw new IllegalArgumentException("O curso deve ter um nome e uma categoria!");
-
+    public CourseEntity execute(CourseEntity courseEntity) {
+        return courseRepository.save(courseEntity);
     }
 
-    public List<CourseDTO> listAll(){
+    public List<CourseDTO> listAll() {
 
         List<CourseDTO> list = new ArrayList<>();
 
-        for (CourseEntity i : courseRepository.findAll()){
+        for (CourseEntity i : courseRepository.findAll()) {
 
             var course = courseDTO.builder().name(i.getName()).category(i.getCategory())
                     .active(i.getActive()).build();
-            
+
             list.add(course);
         }
 
         return list;
     }
 
-    public void replace(CourseDTO courseDTO, Long id){
+    public void replace(CourseDTO courseDTO, Long id) {
 
         var savedCourse = findByIdOrThrowBadRequestException(id);
 
@@ -61,17 +55,17 @@ public class CourseUseCase {
                 .created_at(savedCourse.getCreated_at())
                 .updated_at(Date.from(Instant.now())).build();
 
-        courseRepository.save(course);
+        execute(course);
     }
 
-    public void delete (Long id){
+    public void delete(Long id) {
 
         findByIdOrThrowBadRequestException(id);
 
         courseRepository.deleteById(id);
     }
 
-    public void patchUpdate(Long id, EnumActive enumActive){
+    public void patchUpdate(Long id, EnumActive enumActive) {
 
         var savedCourse = findByIdOrThrowBadRequestException(id);
 
@@ -79,7 +73,7 @@ public class CourseUseCase {
         savedCourse.setActive(enumActive);
 
         // Salvar as alterações no banco de dados
-        courseRepository.save(savedCourse);
+        execute(savedCourse);
     }
 
 }

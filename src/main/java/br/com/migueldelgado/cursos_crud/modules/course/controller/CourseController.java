@@ -21,30 +21,37 @@ public class CourseController {
     private CourseUseCase courseUseCase;
 
     @PostMapping("/")
-    public ResponseEntity<Object> create (@Valid @RequestBody CourseEntity courseEntity) {
+    public ResponseEntity<Object> create(@Valid @RequestBody CourseEntity courseEntity) {
+
         return new ResponseEntity<>(courseUseCase.execute(courseEntity), HttpStatus.CREATED);
+
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<CourseDTO>> list(){
+    public ResponseEntity<List<CourseDTO>> list() {
+
         return ResponseEntity.ok(courseUseCase.listAll());
+
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<Void> replace (@Valid @RequestBody CourseDTO courseDTO, @PathVariable Long id){
+    public ResponseEntity<Void> replace(@Valid @RequestBody CourseDTO courseDTO, @PathVariable Long id) {
+
         courseUseCase.replace(courseDTO, id);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<String> delete (@PathVariable Long id){
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+
         courseUseCase.delete(id);
 
         return ResponseEntity.ok().body("Curso deletado com sucesso.");
     }
 
     @PatchMapping(path = "/{id}/{enumActive}")
-    public Object patchUpdate(@PathVariable Long id, @PathVariable EnumActive enumActive){
+    public Object patchUpdate(@PathVariable Long id, @PathVariable EnumActive enumActive) {
 
         courseUseCase.patchUpdate(id, enumActive);
 

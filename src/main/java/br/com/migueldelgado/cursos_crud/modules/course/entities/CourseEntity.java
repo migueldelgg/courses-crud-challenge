@@ -11,7 +11,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
-import java.util.UUID;
 
 @Data
 @Builder

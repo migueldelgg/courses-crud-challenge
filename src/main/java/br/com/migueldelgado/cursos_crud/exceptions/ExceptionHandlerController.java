@@ -1,41 +1,53 @@
 package br.com.migueldelgado.cursos_crud.exceptions;
 
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class ExceptionHandlerController {
+@Order(Ordered.HIGHEST_PRECEDENCE)
+@Log4j2
+public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
 
-    private MessageSource messageSource;
+    @ExceptionHandler(CourseNotFoundException.class)
+    public ResponseEntity<RestErrorMessage> courseNotFoundHandler(CourseNotFoundException ex) {
 
-    public ExceptionHandlerController(MessageSource messageSource){
-        this.messageSource = messageSource;
+        RestErrorMessage restErrorMessage = new RestErrorMessage(HttpStatus.NOT_FOUND, ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(restErrorMessage);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<List<ErrorMessageDTO>>
-    handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
-        List<ErrorMessageDTO> dto = new ArrayList<>();
+        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
 
-        e.getBindingResult().getFieldErrors().forEach(err -> {
+        String fields = fieldErrors.stream().map(FieldError::getField).collect(Collectors.joining(", "));
+        String fieldMessage = fieldErrors.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(", "));
 
-            String message = messageSource.getMessage(err, LocaleContextHolder.getLocale());
-            ErrorMessageDTO error = new ErrorMessageDTO(message, err.getField());
-            dto.add(error);
-
-        });
-
-        return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
-
+        return new ResponseEntity<>(
+                ValidationExceptionDetails.builder()
+                        .timeStamp(LocalDateTime.now())
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .title("Bad Request Exception, Campos inválidos.")
+                        .details("Verifique o corpo da requisição.")
+                        .fields(fields)
+                        .fieldsMessage(fieldMessage)
+                        .build(), HttpStatus.BAD_REQUEST);
     }
-
 }
