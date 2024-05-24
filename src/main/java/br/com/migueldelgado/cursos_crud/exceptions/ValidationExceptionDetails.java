@@ -21,5 +21,4 @@ public class ValidationExceptionDetails {
     private String fields;
     private String fieldsMessage;
 
-
 }

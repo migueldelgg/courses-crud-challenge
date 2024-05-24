@@ -1,7 +1,12 @@
 package br.com.migueldelgado.cursos_crud.modules.course.entities;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public enum EnumActive {
 
+    @NotNull
+    @NotBlank
     ATIVO(1),
     INATIVO(2);
 
