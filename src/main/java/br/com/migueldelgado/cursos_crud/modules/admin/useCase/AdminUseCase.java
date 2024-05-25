@@ -8,6 +8,7 @@ import br.com.migueldelgado.cursos_crud.modules.admin.entities.AdminEntity;
 import br.com.migueldelgado.cursos_crud.modules.admin.repositories.AdminRepository;
 import br.com.migueldelgado.cursos_crud.modules.user.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +23,9 @@ public class AdminUseCase {
 
     @Autowired
     private AdminRepository adminRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public AdminEntity findByIdOrThrowBadRequestException(Long id) {
         return adminRepository.findById(id).orElseThrow(()
@@ -42,6 +46,9 @@ public class AdminUseCase {
                 throw new UserAlreadyExistException();
             }
         }
+
+        var password = passwordEncoder.encode(admin.getPassword());
+        admin.setPassword(password);
         return adminRepository.save(admin);
     }
 

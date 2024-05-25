@@ -28,7 +28,7 @@ public class CourseController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<CourseDTO>> list() {
+    public ResponseEntity<List<CourseDTO>> listAll() {
 
         return ResponseEntity.ok(courseUseCase.listAll());
 

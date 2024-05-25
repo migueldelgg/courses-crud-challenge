@@ -14,6 +14,7 @@ import org.springframework.lang.Nullable;
 import java.util.Date;
 
 @Data
+@Builder
 @Entity(name = "course")
 public class CourseEntity {
 
