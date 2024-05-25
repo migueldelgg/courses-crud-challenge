@@ -1,12 +1,12 @@
 package br.com.migueldelgado.cursos_crud.exceptions;
 
-public class AdminNotFound extends RuntimeException{
+public class AdminNotFoundException extends RuntimeException{
 
-    public AdminNotFound(){
+    public AdminNotFoundException(){
         super("Ops, esse Administrador nao existe, verifique o id!");
     }
 
-    public AdminNotFound(String message){
+    public AdminNotFoundException(String message){
         super (message);
     }
 }

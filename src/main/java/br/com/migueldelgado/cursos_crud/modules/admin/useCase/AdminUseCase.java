@@ -1,11 +1,12 @@
 package br.com.migueldelgado.cursos_crud.modules.admin.useCase;
 
-import br.com.migueldelgado.cursos_crud.exceptions.AdminNotFound;
-import br.com.migueldelgado.cursos_crud.exceptions.CourseNotFoundException;
+import br.com.migueldelgado.cursos_crud.exceptions.AdminNotFoundException;
+import br.com.migueldelgado.cursos_crud.exceptions.UserAlreadyExistException;
 import br.com.migueldelgado.cursos_crud.modules.admin.dto.AdminDTO;
 import br.com.migueldelgado.cursos_crud.modules.admin.dto.PublicAdminInfoDTO;
 import br.com.migueldelgado.cursos_crud.modules.admin.entities.AdminEntity;
 import br.com.migueldelgado.cursos_crud.modules.admin.repositories.AdminRepository;
+import br.com.migueldelgado.cursos_crud.modules.user.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class AdminUseCase {
 
     public AdminEntity findByIdOrThrowBadRequestException(Long id) {
         return adminRepository.findById(id).orElseThrow(()
-                -> new AdminNotFound()
+                -> new AdminNotFoundException()
         );
     }
 
@@ -36,8 +37,12 @@ public class AdminUseCase {
 
     public AdminEntity execute(AdminEntity admin){
 
+        for (AdminEntity existingAdmin : adminRepository.findAll()) {
+            if (admin.getUsername().equals(existingAdmin.getUsername()) || admin.getEmail().equals(existingAdmin.getEmail())) {
+                throw new UserAlreadyExistException();
+            }
+        }
         return adminRepository.save(admin);
-
     }
 
     public List<PublicAdminInfoDTO> listAll(){
@@ -55,5 +60,11 @@ public class AdminUseCase {
         return list;
     }
 
+    public void delete(Long id){
+
+        var admin = findByIdOrThrowBadRequestException(id);
+
+        adminRepository.deleteById(admin.getId());
+    }
 
 }

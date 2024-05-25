@@ -31,8 +31,24 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(restErrorMessage);
     }
 
-    @ExceptionHandler(AdminNotFound.class)
-    public ResponseEntity<RestErrorMessage> adminNotFoundHandler(AdminNotFound ex) {
+    @ExceptionHandler(AdminNotFoundException.class)
+    public ResponseEntity<RestErrorMessage> adminNotFoundHandler(AdminNotFoundException ex) {
+
+        RestErrorMessage restErrorMessage = new RestErrorMessage(HttpStatus.NOT_FOUND, ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(restErrorMessage);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<RestErrorMessage> userNotFoundHandler(UserNotFoundException ex) {
+
+        RestErrorMessage restErrorMessage = new RestErrorMessage(HttpStatus.NOT_FOUND, ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(restErrorMessage);
+    }
+
+    @ExceptionHandler(UserAlreadyExistException.class)
+    public ResponseEntity<RestErrorMessage> userAlreadyExistException(UserAlreadyExistException ex) {
 
         RestErrorMessage restErrorMessage = new RestErrorMessage(HttpStatus.NOT_FOUND, ex.getMessage());
 
