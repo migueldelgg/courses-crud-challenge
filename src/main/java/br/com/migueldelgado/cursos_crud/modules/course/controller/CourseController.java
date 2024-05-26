@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +28,8 @@ public class CourseController {
 
     }
 
-    @GetMapping("/")
+    @GetMapping("/listar")
+    @PreAuthorize("hasRole('USUARIO')")
     public ResponseEntity<List<CourseDTO>> listAll() {
 
         return ResponseEntity.ok(courseUseCase.listAll());
@@ -42,7 +44,7 @@ public class CourseController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
 
         courseUseCase.delete(id);

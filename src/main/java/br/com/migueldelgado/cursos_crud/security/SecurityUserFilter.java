@@ -29,22 +29,25 @@ public class SecurityUserFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
 
-        if(header != null){
-            var subjectToken = jwtProvider.validateToken(header);
+        if(request.getRequestURI().startsWith("/curso/listar") || request.getRequestURI().startsWith("/admin/listar")) {
+            if(header != null){
+                var subjectToken = jwtProvider.validateToken(header);
 
-            if(subjectToken.isEmpty()){
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
+                if(subjectToken.isEmpty()){
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
+                request.setAttribute("user_id", response);
+
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(subjectToken, null, Collections.emptyList());
+
+                SecurityContextHolder.getContext().setAuthentication(auth);
             }
-            request.setAttribute("user_id", response);
-
-            UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(subjectToken, null, Collections.emptyList());
-
-            SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
-        filterChain.doFilter(request, response);
+
+            filterChain.doFilter(request, response);
     }
 }
 

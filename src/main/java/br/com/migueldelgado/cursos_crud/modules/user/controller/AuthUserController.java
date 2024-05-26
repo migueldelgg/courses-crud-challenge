@@ -5,6 +5,7 @@ import br.com.migueldelgado.cursos_crud.modules.user.useCase.AuthUserUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,7 @@ public class AuthUserController {
     private AuthUserUseCase authUserUseCase;
 
     @PostMapping("/")
-    public ResponseEntity<Object> create(@RequestBody AuthUserDTO authUserDTO) {
+    public ResponseEntity<Object> auth(@RequestBody AuthUserDTO authUserDTO) {
         try {
             var token = this.authUserUseCase.execute(authUserDTO);
             return ResponseEntity.ok().body(token);

@@ -54,7 +54,7 @@ public class AuthUserUseCase {
         var token = JWT.create()
                 .withIssuer("courses_visualize_api")
                 .withSubject(user.getId().toString())
-                .withClaim("roles", Arrays.asList("USER"))
+                .withClaim("roles", Arrays.asList("USUARIO"))
                 .withExpiresAt(expiresIn)
                 .sign(algorithm);
 

@@ -7,6 +7,7 @@ import br.com.migueldelgado.cursos_crud.modules.admin.useCase.AdminUseCase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ public class AdminController {
     }
 
     @GetMapping("/") //publico
+    @PreAuthorize("hasRole('USUARIO')")
     public ResponseEntity<List<PublicAdminInfoDTO>> listAll(){
         return ResponseEntity.ok(adminUseCase.listAll());
     }
