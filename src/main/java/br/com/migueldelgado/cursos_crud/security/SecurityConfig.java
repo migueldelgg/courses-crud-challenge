@@ -28,6 +28,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/user/").permitAll();
                     auth.requestMatchers("/admin/").permitAll();
                     auth.requestMatchers("/user/auth/").permitAll();
+                    auth.requestMatchers("/curso/").permitAll();
                     auth.anyRequest().authenticated();
                         })
                 .addFilterBefore(securityUserFilter, BasicAuthenticationFilter.class);
